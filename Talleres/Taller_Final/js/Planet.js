@@ -6,11 +6,12 @@ var Planet = function(params){
 	this.geom;
 	this.material = params.material;
 	this.name = params.name;
+	this.maxHeight = params.maxHeight ? params.maxHeight : 1;
 };
 
 Planet.prototype.create = function()
 {
-	var radius = this.radius;
+	
 	var latitudeBands = this.latitudeBands;
 	var longitudeBands = this.longitudeBands;
 	var heightMatrix = this.heightMatrix;
@@ -28,24 +29,24 @@ Planet.prototype.create = function()
 			var phi = longNumber * 2 * Math.PI / longitudeBands;
 			var sinPhi = Math.sin(phi);
 			var cosPhi = Math.cos(phi);
-			
+			var radius = this.radius;
 			if(heightMatrix)
 			{	
 				if(latNumber == density && longNumber == density)
 				{
-					radius = heightMatrix[0][0];
+					radius += heightMatrix[0][0] * this.maxHeight;
 				}
 				else if(latNumber == density)
 				{
-					radius = heightMatrix[0][density - 1 - longNumber];
+					radius += heightMatrix[0][density - 1 - longNumber] * this.maxHeight;
 				}
 				else if(longNumber == density)
 				{
-					radius = heightMatrix[latNumber][0];
+					radius += heightMatrix[latNumber][0] * this.maxHeight;
 				}
 				else
 				{
-					radius = heightMatrix[latNumber][density - 1 - longNumber];
+					radius += heightMatrix[latNumber][density - 1 - longNumber] * this.maxHeight;
 				}
 			}		
 
@@ -64,7 +65,6 @@ Planet.prototype.create = function()
 	
 	var node = new THREE.Object3D();
 	node.name = name;
-	//node.add(createAxis(5));
 	node.add(mesh);
 	
 	return node;
@@ -83,7 +83,6 @@ Planet.prototype.createFaces = function()
 			
 			geom.faces.push(new THREE.Face3(first + 1, second, first));
 			geom.faces.push(new THREE.Face3(first + 1, second + 1, second));
-			
 		}
 	}
 };
@@ -92,8 +91,8 @@ Planet.prototype.createUvs = function()
 {
 	var geom = this.geom;
 	var faceIndex = 0;
-	var minHeight = 5;
-	var maxHeight = 6;
+	var minHeight = this.radius;
+	var maxHeight = this.radius + this.maxHeight;
 	for(faceIndex in geom.faces)
 	{
 		var v1 = geom.vertices[geom.faces[faceIndex].a];
@@ -108,14 +107,55 @@ Planet.prototype.createUvs = function()
 		var textCoord2 = (radiusV2 - minHeight) / (maxHeight - minHeight);
 		var textCoord3 = (radiusV3 - minHeight) / (maxHeight - minHeight);
 		
-		// var textUV1 = new THREE.Vector2(0,textCoord1);
-		// var textUV2 = new THREE.Vector2(1,textCoord2);
-		// var textUV3 = new THREE.Vector2(0,textCoord3);
-		
-		var textUV1 = new THREE.Vector2(0,0);
-		var textUV2 = new THREE.Vector2(1,0);
-		var textUV3 = new THREE.Vector2(1,1);
+		var textUV1 = new THREE.Vector2(0,textCoord1);
+		var textUV2 = new THREE.Vector2(1,textCoord2);
+		var textUV3 = new THREE.Vector2(0,textCoord3);
 		
 		geom.faceVertexUvs[0][faceIndex] = [ textUV1, textUV2, textUV3];
 	}
+};
+
+Planet.prototype.getXYZFromPixel = function(pixX, pixY, radiusPerc)
+{
+	var latitudeBands = this.latitudeBands;
+	var longitudeBands = this.longitudeBands;
+	var heightMatrix = this.heightMatrix;
+	
+	var latNumber = pixY;
+	var longNumber = density - pixX;
+	
+	var theta = latNumber * Math.PI / latitudeBands;	
+	var sinTheta = Math.sin(theta);
+	var cosTheta = Math.cos(theta);
+	
+	var phi = longNumber * 2 * Math.PI / longitudeBands;
+	var sinPhi = Math.sin(phi);
+	var cosPhi = Math.cos(phi);
+	var radius = this.radius;
+	if(heightMatrix)
+	{	
+		if(latNumber == density && longNumber == density)
+		{
+			radius += heightMatrix[0][0] * this.maxHeight;
+		}
+		else if(latNumber == density)
+		{
+			radius += heightMatrix[0][density - 1 - longNumber] * this.maxHeight;
+		}
+		else if(longNumber == density)
+		{
+			radius += heightMatrix[latNumber][0] * this.maxHeight;
+		}
+		else
+		{
+			radius += heightMatrix[latNumber][density - 1 - longNumber] * this.maxHeight;
+		}
+	}		
+	
+	radius *= radiusPerc ? radiusPerc : 1;
+	var x = radius * cosPhi * sinTheta;
+	var y = radius * cosTheta;
+	var z = radius * sinPhi * sinTheta;
+	
+	return [x, y, z];
 };

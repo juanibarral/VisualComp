@@ -6,7 +6,16 @@ var controls;
 var planetNode;
 var planetObject;
 
-var density = 10;
+var density = 512;
+
+var canvas;
+
+var status = 0;
+
+var directionalLight;
+var lightDirX = 1;
+var lightDirZ = 0;
+var lightTheta = 0;
 
 
 function createScene()
@@ -18,9 +27,13 @@ function createScene()
 		alert('The File APIs are not fully supported in this browser.');
 	}
 	
+	canvas = document.getElementById('myCanvas');
+	// canvas.addEventListener('mousemove', onMouseMove);
+	canvas.addEventListener('click', onMouseClick);
+	
 	scene = new THREE.Scene();
 	
-	scene.fog = new THREE.Fog(0xffffff, 100, 600);
+	//scene.fog = new THREE.Fog(0xffffff, 100, 600);
 	
 	camera = new THREE.PerspectiveCamera( 75, 1, 0.1, 1000 );
 		// camera.position.x = 15;
@@ -28,37 +41,37 @@ function createScene()
 	// camera.position.y = 1;
 	
 	// camera.position.x = 5;
-	camera.position.z = 7;
+	camera.position.z = 100;
 	// camera.position.y = 7;
 	
 	camera.lookAt( new THREE.Vector3(0,0,0));
 	
-	//controls = new THREE.OrbitControls(camera);
-	//controls.addEventListener('change', render);
+	// controls = new THREE.OrbitControls(camera);
+	// controls.addEventListener('change', render);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( 500, 500 );
 	document.getElementById("div_canvas").appendChild( renderer.domElement );
 	
-	var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-	directionalLight.position.set( 1, 1, 1);
+	directionalLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
+	directionalLight.position.set( lightDirX, 0, lightDirZ);
 	scene.add( directionalLight );
+	
 
 	var light = new THREE.AmbientLight( 0x404040 );
 	scene.add( light );
 	
 	
-	//Planeta
+	//Planet
 	planetObject = new Planet({
-		radius : 5, 
+		radius : 50, 
 		latitudeBands : density, 
 		longitudeBands : density,
-		material : new THREE.MeshLambertMaterial({ color : 0xff0000}),
-		name : 'planet1'
+		material : new THREE.MeshPhongMaterial({ color : 0xff0000}),
+		name : 'planet1',
+		maxHeight : 1
 	});
 	planetNode = planetObject.create();
-	//planet = createPlanet(5, density,density);
-	// planet = createFlatPlanet(1, density,density);
 	scene.add(planetNode);
 
 	render();
@@ -67,14 +80,19 @@ function createScene()
 function render()
 {
 	requestAnimationFrame( render );
-	planetNode.rotation.y -= 0.01;
+	//planetNode.rotation.y -= 0.001;
+	lightTheta -= 0.01;
+	lightDirX = Math.cos(lightTheta);
+	lightDirZ = Math.sin(lightTheta);
+	directionalLight.position.set( lightDirX, 0, lightDirZ);
+	
 	renderer.render( scene, camera );
 }
 
 function loadFile(evt)
 {
 	var side = density;
-	var canvas = document.getElementById('myCanvas');
+	
 	var context = canvas.getContext('2d');
 	var files = evt.target.files;
 
@@ -82,8 +100,8 @@ function loadFile(evt)
 	
 	fr.onload = function(e) {
 		var heightMatrix = [];
-		var minHeight = 5;
-		var maxHeight = 6;
+		//var minHeight = 5;
+		//var maxHeight = 6;
 		img = new Image();
 		img.onload = function(e) {
 			context.drawImage(e.target, 0, 0);
@@ -98,7 +116,8 @@ function loadFile(evt)
 				var alpha = data[i + 3];
 				
 				var avg = ((red + green + blue) / 3) / 255;
-				var value = minHeight + ((maxHeight - minHeight) * avg);
+				// var value = minHeight + ((maxHeight - minHeight) * avg);
+				var value = avg;
 				var r = i % side;
 				if((i/4) % side == 0)
 				{
@@ -133,11 +152,47 @@ function loadTexture(evt)
 		var selectedObject = scene.getObjectByName(planetNode.name);
 		scene.remove(selectedObject);
 		
-		planetObject.material = new THREE.MeshLambertMaterial({ map : THREE.ImageUtils.loadTexture( e.target.result )});
+		planetObject.material = new THREE.MeshPhongMaterial({ 
+			map : THREE.ImageUtils.loadTexture( e.target.result ),
+			shininess : 10
+		});
+		
+		planetNode = planetObject.create();
 		planetObject.createUvs();
-		planet = planetObject.create();
-		scene.add(planet);
+		scene.add(planetNode);
 	};
 
 	fr.readAsDataURL(files[0]); 
+}
+
+function onMouseMove(evt)
+{
+	var rect = canvas.getBoundingClientRect();
+	var x = evt.clientX - rect.left;
+	var y = evt.clientY - rect.top;
+	console.log(x + "," + y);
+}
+
+function onMouseClick(evt)
+{
+	var rect = canvas.getBoundingClientRect();
+	var x = evt.clientX - rect.left;
+	var y = evt.clientY - rect.top;
+	console.log(x + "," + y);
+	
+	var point = planetObject.getXYZFromPixel(x,y, 1.5);
+	
+	var geometry = new THREE.SphereGeometry( 0.2, 8, 8 );
+	var material = new THREE.MeshPhongMaterial( {color: 0x00ffff} );
+	var sphere = new THREE.Mesh( geometry, material );
+	sphere.position.x = point[0];
+	sphere.position.y = point[1];
+	sphere.position.z = point[2];
+	// planetNode.add( sphere );	
+	
+	camera.position.x = point[0];
+	camera.position.y = point[1];
+	camera.position.z = point[2];
+	
+	camera.lookAt( new THREE.Vector3(0,0,0));
 }
