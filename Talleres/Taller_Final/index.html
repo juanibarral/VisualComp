@@ -14,22 +14,27 @@
         <script type="text/javascript" src="js/Taller_05.js"></script>
     </head>
     <body>
-        <h1>Taller 5 - ThreeJS y Grafos de Escena</h1>
+        
         <div class="container">
-        	<div class="row">
-        		<div class="col-md-6">
-        			<div id="div_canvas" >
+        	<div id="div_canvas" style="text-align:center">
         	
-        			</div>
-        		</div>
+        	</div>
+        	<div class="row">
         		<div class="col-md-6">
         			<div id="div_image" >
         				 <canvas id="myCanvas" width="512" height="512"></canvas>
         			</div>
+        			<input type="file" id="files" name="files[]" />
+        		</div>
+        		<div class="col-md-6">
+        			<div id="div_texture" >
+        				 <canvas id="textureCanvas" width="512" height="512"></canvas>
+        			</div>
+        			<input type="file" id="textures" name="files[]" />
         		</div>
         	</div>
-        	<input type="file" id="files" name="files[]" />
-        	<input type="file" id="textures" name="files[]" />
+        	
+        	
         	
         </div>
         

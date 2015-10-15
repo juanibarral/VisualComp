@@ -9,6 +9,7 @@ var planetObject;
 var density = 512;
 
 var canvas;
+var textCanvas;
 
 var status = 0;
 
@@ -28,12 +29,13 @@ function createScene()
 	}
 	
 	canvas = document.getElementById('myCanvas');
-	// canvas.addEventListener('mousemove', onMouseMove);
+	textCanvas = document.getElementById('textureCanvas');
+	canvas.addEventListener('mousemove', onMouseMove);
 	canvas.addEventListener('click', onMouseClick);
 	
 	scene = new THREE.Scene();
 	
-	//scene.fog = new THREE.Fog(0xffffff, 100, 600);
+	scene.fog = new THREE.Fog(0xff0000, 500, 1500);
 	
 	camera = new THREE.PerspectiveCamera( 75, 1, 0.1, 1000 );
 		// camera.position.x = 15;
@@ -46,8 +48,8 @@ function createScene()
 	
 	camera.lookAt( new THREE.Vector3(0,0,0));
 	
-	// controls = new THREE.OrbitControls(camera);
-	// controls.addEventListener('change', render);
+	controls = new THREE.OrbitControls(camera);
+	controls.addEventListener('change', render);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( 500, 500 );
@@ -68,8 +70,9 @@ function createScene()
 		latitudeBands : density, 
 		longitudeBands : density,
 		material : new THREE.MeshPhongMaterial({ color : 0xff0000}),
+		// material : new THREE.MeshBasicMaterial({ color : 0xff0000, wireframe : true}),
 		name : 'planet1',
-		maxHeight : 1
+		maxHeight : 0.5
 	});
 	planetNode = planetObject.create();
 	scene.add(planetNode);
@@ -146,20 +149,32 @@ function loadTexture(evt)
 {
 	var files = evt.target.files;
 	var fr = new FileReader();
-	
+	var textContext = textCanvas.getContext('2d');
 	fr.onload = function(e) {
+		
 		textureSrc = e.target.result;
 		var selectedObject = scene.getObjectByName(planetNode.name);
 		scene.remove(selectedObject);
 		
+		var texture = THREE.ImageUtils.loadTexture( e.target.result );
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		
 		planetObject.material = new THREE.MeshPhongMaterial({ 
-			map : THREE.ImageUtils.loadTexture( e.target.result ),
+			map : texture,
 			shininess : 10
 		});
 		
 		planetNode = planetObject.create();
 		planetObject.createUvs();
 		scene.add(planetNode);
+		
+		var text = new Image();
+		text.onload = function(e){
+			textContext.drawImage(e.target, 0, 0);
+		};
+		text.src = e.target.result;
+		
 	};
 
 	fr.readAsDataURL(files[0]); 
@@ -180,7 +195,7 @@ function onMouseClick(evt)
 	var y = evt.clientY - rect.top;
 	console.log(x + "," + y);
 	
-	var point = planetObject.getXYZFromPixel(x,y, 1.5);
+	var point = planetObject.getXYZFromPixel(x,y, 1.2);
 	
 	var geometry = new THREE.SphereGeometry( 0.2, 8, 8 );
 	var material = new THREE.MeshPhongMaterial( {color: 0x00ffff} );

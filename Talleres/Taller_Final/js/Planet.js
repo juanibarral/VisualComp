@@ -53,6 +53,8 @@ Planet.prototype.create = function()
 			var x = radius * cosPhi * sinTheta;
 			var y = radius * cosTheta;
 			var z = radius * sinPhi * sinTheta;
+			// var y = radius * sinPhi * sinTheta;
+			// var z = radius * cosTheta;
 			geom.vertices.push(new THREE.Vector3(x, y, z));	
 		}
 	}
@@ -112,8 +114,47 @@ Planet.prototype.createUvs = function()
 		var textUV3 = new THREE.Vector2(0,textCoord3);
 		
 		geom.faceVertexUvs[0][faceIndex] = [ textUV1, textUV2, textUV3];
-	}
+	} 
 };
+
+Planet.prototype.createSimpleUvs = function()
+{
+	var geom = this.geom;
+	var faceIndex = 0;
+	var minHeight = this.radius;
+	var maxHeight = this.radius + this.maxHeight;
+	for(faceIndex in geom.faces)
+	{
+		var v1 = geom.vertices[geom.faces[faceIndex].a];
+		var v2 = geom.vertices[geom.faces[faceIndex].b];
+		var v3 = geom.vertices[geom.faces[faceIndex].c]; 
+		
+		var radiusV1 = Math.sqrt((v1.x * v1.x) + (v1.y * v1.y) + (v1.z * v1.z));
+		var thetaV1 = Math.acos(v1.y/radiusV1);
+		var phiV1 = Math.atan(v1.z/v1.x);
+		
+		var radiusV2 = Math.sqrt((v2.x * v2.x) + (v2.y * v2.y) + (v2.z * v2.z));
+		var thetaV2 = Math.acos(v2.y/radiusV2);
+		var phiV2 = Math.atan(v2.z/v2.x);
+		
+		var radiusV3 = Math.sqrt((v3.x * v3.x) + (v3.y * v3.y) + (v3.z * v3.z));
+		var thetaV3 = Math.acos(v3.y/radiusV3);
+		var phiV3 = Math.atan(v3.z/v3.x);
+		
+		var textCoord1 = [ phiV1 / (2 * Math.PI), thetaV1 / Math.PI];
+		var textCoord2 = [ phiV2 / (2 * Math.PI), thetaV2 / Math.PI];
+		var textCoord3 = [ phiV3 / (2 * Math.PI), thetaV3 / Math.PI];
+		
+		var textUV1 = new THREE.Vector2(1 - textCoord1[0], 1 - textCoord1[1]);
+		var textUV2 = new THREE.Vector2(1 - textCoord2[0], 1 - textCoord2[1]);
+		var textUV3 = new THREE.Vector2(1 - textCoord3[0], 1 - textCoord3[1]);
+		
+		geom.faceVertexUvs[0][faceIndex] = [ textUV1, textUV2, textUV3];
+	}
+	
+};
+
+
 
 Planet.prototype.getXYZFromPixel = function(pixX, pixY, radiusPerc)
 {
