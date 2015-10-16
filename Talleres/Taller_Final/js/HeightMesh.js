@@ -33,8 +33,8 @@ function createFlatPlanet(cellSize,latitudeBands, longitudeBands) {
 	}
 	
 
-	for (var latNumber = 0; latNumber < latitudeBands - 1; latNumber++) {
-		for (var longNumber = 0; longNumber < longitudeBands - 1; longNumber++) {
+	for (var latNumber = 0; latNumber < latitudeBands - 2; latNumber++) {
+		for (var longNumber = 0; longNumber < longitudeBands - 2; longNumber++) {
 			var first = latNumber + (longNumber * latitudeBands);
 			var second = first + longitudeBands;
 
