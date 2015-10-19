@@ -1,7 +1,8 @@
 var THREE_BezierSurfaceGeometry = function()
 {
 	this.controlPoints = [];
-	this.subdivisions = 3;
+	this.subdivisionsU = 3;
+	this.subdivisionsV = 3;
 	this.vertices;
 };
 
@@ -34,7 +35,7 @@ THREE_BezierSurfaceGeometry.prototype.createMeshU = function(controlPoints)
 		
 		var bezierCurve = new THREE_BezierCurveGeometry();
 		bezierCurve.controlPoints = points;
-		bezierCurve.subdivisions = this.subdivisions;
+		bezierCurve.subdivisions = this.subdivisionsU;
 		bezierCurve.calculate();
 		newControlPoints[i] = bezierCurve.vertices;
 	};
@@ -58,7 +59,7 @@ THREE_BezierSurfaceGeometry.prototype.createMeshV = function(controlPoints)
 		}
 		var bezierCurve = new THREE_BezierCurveGeometry();
 		bezierCurve.controlPoints = points;
-		bezierCurve.subdivisions = this.subdivisions;
+		bezierCurve.subdivisions = this.subdivisionsV;
 		bezierCurve.calculate();
 		newControlPoints[j] = bezierCurve.vertices;
 		

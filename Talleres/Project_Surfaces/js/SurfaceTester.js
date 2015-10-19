@@ -6,7 +6,7 @@ var controls;
 var surfaceObject;
 var nurbsSurface;
 
-var density = 512;
+
 
 var canvas;
 var textCanvas;
@@ -21,15 +21,9 @@ var lightTheta = 0;
 
 function createScene()
 {
-	
 	scene = new THREE.Scene();
 	
-	scene.fog = new THREE.Fog(0xff0000, 500, 1500);
-	
 	camera = new THREE.PerspectiveCamera( 75,  window.innerWidth / window.innerHeight, 0.1, 1000 );
-		// camera.position.x = 15;
-	// camera.position.z = 30;
-	// camera.position.y = 1;
 	
 	camera.position.x = 100;
 	camera.position.y = 100;
@@ -53,9 +47,6 @@ function createScene()
 
 	var light = new THREE.AmbientLight( 0x404040 );
 	scene.add( light );
-	
-	
-	//Planet
 	
 	scene.add(new Axis(10));
 	
@@ -139,7 +130,7 @@ function createScene()
 	
 	var mesh = new THREE_Surface({
 		vertices : bezierSurface.vertices,
-		material : new THREE.MeshPhongMaterial({color: 0xffff00, wireframe : false})
+		material : new THREE.MeshPhongMaterial({color: 0xffff00, wireframe : true})
 		// material : new THREE.LineBasicMaterial({color: 0xffff00})
 	});
 	mesh.create();
@@ -178,12 +169,4 @@ function render()
 	requestAnimationFrame( render );
 	renderer.render( scene, camera );
 }
-
-
-Math.prototype.factorial = function(n) {
-	var fact = 1;
-	for (var i = 2; i <= num; i++)
-		fact = fact * i;
-	return fact;
-}; 
 
