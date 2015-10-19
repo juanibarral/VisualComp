@@ -1,12 +1,10 @@
 var THREE_BSplineSurfaceGeometry = function()
 {
 	this.controlPoints;
-	this.subdivisions = 3;
-	this.vertices = [];	
-	this.knotVector;
+	this.subdivisionsU = 3;
+	this.subdivisionsV = 3;
+	this.vertices;	
 	this.degree = 3;
-	
-	this.precision = 0.999999;
 };
 
 THREE_BSplineCurveGeometry.prototype.calculate2 = function()
