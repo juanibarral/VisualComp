@@ -28,6 +28,7 @@ THREE_Surface.prototype.create = function()
 	}
 
 	this.geometry.computeFaceNormals();
+	this.geometry.computeVertexNormals();
 	
 	var mesh = new THREE.Mesh( this.geometry, this.material );
 	this.node.add(mesh);

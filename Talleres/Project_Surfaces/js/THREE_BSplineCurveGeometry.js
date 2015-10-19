@@ -12,7 +12,7 @@ var THREE_BSplineCurveGeometry = function()
 THREE_BSplineCurveGeometry.prototype.calculate2 = function()
 {
 	if(!this.knotVector)
-		this.calculateUniformKnotVector();
+		this.calculateUniformKnotVector2();
 	else 
 		this.degree = this.knotVector.length - this.controlPoints.length - 1;
 	
