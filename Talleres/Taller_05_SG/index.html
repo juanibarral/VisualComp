@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Taller 05-ThreeJS</title>
+        
+        <script type="text/javascript" src="js/lib/three.min.js"></script>
+        <script type="text/javascript" src="js/Taller_05.js"></script>
+    </head>
+    <body>
+        <h1>Taller 5 - ThreeJS y Grafos de Escena</h1>
+        <div id="div_canvas" style="width : 500px; height : 500px">
+        	
+        </div>
+        
+        <h4>Controles</h4>
+		<form>
+			Eje 1:
+  			<input type="range" name="range_rot_x" id="r_rot_x" min="-100" max="100" oninput="change_rot_eje1(this.value)" style="width : 250px">
+  			<input type="text" id="p_rot_1" maxlength="3" size="3" readonly> degrees
+  			<br>
+  			Eje 2:
+  			<input type="range" name="range_rot_y"  id="r_rot_y" min="-100" max="100" oninput="change_rot_eje2(this.value)" style="width : 250px">
+  			<input type="text" id="p_rot_2" maxlength="3" size="3" readonly> degrees
+  			<br>
+  			Eje 3:
+  			<input type="range" name="range_rot_z"  id="r_rot_z" min="-100" max="100" oninput="change_rot_eje3(this.value)" style="width : 250px">
+  			<input type="text" id="p_rot_3" maxlength="3" size="3" readonly> degrees
+		</form>
+        
+        <script>
+        	createScene();
+        </script>
+    </body>
+</html>
