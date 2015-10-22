@@ -36,6 +36,8 @@ var draggingPos = {
 var relocating = false;
 var relocatingHandle;
 
+var gamepadIndex = -1;
+
 window.onload = function(){
 	window.addEventListener('click', onMouseClicked, false);
 	window.addEventListener('mousedown', function(evt){
@@ -56,6 +58,14 @@ window.onload = function(){
 		}
 	}, false);
 	window.addEventListener('mousemove', onMouseMove, false);
+	
+	window.addEventListener('gamepadconnected', function(e){
+		console.log("gamepad connected " + e.gamepad.index + ". Buttons: " + e.gamepad.buttons.length + ". axes: " + e.gamepad.axes.length);
+		gamepadIndex = e.gamepad.index;
+	}, false);
+	window.addEventListener('gamepadisconnected', function(e){
+		gamepadIndex = -1;
+	}, false);
 };
 
 var SurfaceControl = function()
@@ -140,6 +150,17 @@ SurfaceControl.prototype.update = function()
 
 function createScene()
 {
+	
+	
+	if(navigator.getGamepads().length > 0){
+		console.log("Controllers connected");
+		gamepad = navigator.getGamepads();
+	}
+	else
+	{
+		console.log("controllers not connected");
+	}
+	
 	document.body.appendChild( stats.domElement );
 	surfaceControl = new SurfaceControl();
 	var gui = new dat.GUI();
@@ -217,6 +238,33 @@ function render()
 	requestAnimationFrame( render );
 	renderer.render( scene, camera );
 	stats.update();
+	
+	//gameLoop();
+}
+
+function gameLoop()
+{
+	
+	
+	if(gamepadIndex != -1)
+	{
+		var gamepadWithInfo = navigator.getGamepads()[gamepadIndex];
+		var buttons = gamepadWithInfo.buttons;
+		for(var i in buttons)
+		{
+			if(buttons[i].pressed)
+			{
+				console.log("Button " + i + " pressed");
+			}
+		}
+		var axes = gamepadWithInfo.axes;
+		var values = '';
+		for(var i in axes)
+		{
+			values += axes[i] + " ";
+		}
+		console.log(values);
+	}
 }
 
 function testBezier()
@@ -389,3 +437,6 @@ function addLocalController(object)
 	}
 	
 }
+
+var surface = [
+];

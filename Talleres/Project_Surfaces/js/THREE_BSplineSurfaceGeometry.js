@@ -4,10 +4,11 @@ var THREE_BSplineSurfaceGeometry = function()
 	this.subdivisionsU = 3;
 	this.subdivisionsV = 3;
 	this.vertices;	
-	this.degree = 3;
+	this.degreeU = 3;
+	this.degreeV = 3;
 };
 
-THREE_BSplineCurveGeometry.prototype.calculate2 = function()
+THREE_BSplineSurfaceGeometry.prototype.calculate = function()
 {
 	if(!this.knotVector)
 		this.calculateUniformKnotVector();
@@ -53,7 +54,7 @@ THREE_BSplineCurveGeometry.prototype.calculate2 = function()
  * @param {Object} p degree of the basis function
  * @param {Object} u 
  */
-THREE_BSplineCurveGeometry.prototype.calculateBasisFunction = function(i, p, u)
+THREE_BSplineSurfaceGeometry.prototype.calculateBasisFunction = function(i, p, u)
 {
 	var u_i = this.knotVector[i];
 	var u_i1 = this.knotVector[i + 1];
@@ -79,7 +80,7 @@ THREE_BSplineCurveGeometry.prototype.calculateBasisFunction = function(i, p, u)
  * 
  * @param {Object} u
  */
-THREE_BSplineCurveGeometry.prototype.getXYZ = function(u)
+THREE_BSplineSurfaceGeometry.prototype.getXYZ = function(u)
 {
 	var x = 0;
 	var y = 0;
@@ -96,7 +97,7 @@ THREE_BSplineCurveGeometry.prototype.getXYZ = function(u)
 	return new THREE.Vector3(x,y,z);
 };
 
-THREE_BSplineCurveGeometry.prototype.calculateUniformKnotVector2 = function()
+THREE_BSplineSurfaceGeometry.prototype.calculateUniformKnotVector2 = function()
 {
 	this.knotVector = [];
 	var size = this.controlPoints.length + this.degree + 1;    
@@ -107,7 +108,7 @@ THREE_BSplineCurveGeometry.prototype.calculateUniformKnotVector2 = function()
 	}
 };
 
-THREE_BSplineCurveGeometry.prototype.calculateUniformKnotVector = function()
+THREE_BSplineSurfaceGeometry.prototype.calculateUniformKnotVector = function()
 {
 	this.knotVector = [];
 	var size = this.controlPoints.length + this.degree + 1;    
@@ -130,7 +131,7 @@ THREE_BSplineCurveGeometry.prototype.calculateUniformKnotVector = function()
 };
 
 
-THREE_BSplineCurveGeometry.prototype.calculate = function()
+THREE_BSplineSurfaceGeometry.prototype.calculate = function()
 {
 	if(!this.knotVector)
 		this.calculateUniformKnotVector();
@@ -157,7 +158,7 @@ THREE_BSplineCurveGeometry.prototype.calculate = function()
 	}
 };
 
-THREE_BSplineCurveGeometry.prototype.calculateBasisDeBoor = function(u)
+THREE_BSplineSurfaceGeometry.prototype.calculateBasisDeBoor = function(u)
 {
 	var N = [];
 	var p = this.degree;
