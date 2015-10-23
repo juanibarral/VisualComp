@@ -6,10 +6,21 @@ var io = require('socket.io')(http);
 var surface;
 var players = {};
 
+var colors = [
+	[1.0, 0.0, 0.0],
+	[0.0, 1.0, 0.0],
+	[0.0, 0.0, 1.0],
+	[1.0, 1.0, 0.0],
+	[1.0, 0.0, 1.0],
+	[0.0, 1.0, 1.0],
+	[0.0, 0.0, 0.0],
+];
+
 var Player = function(params)
 {
 	this.name = "";
 	this.id = 0;
+	this.color = colors[6];
 	this.position = {
 		x : 0,
 		y : 0,
@@ -25,6 +36,7 @@ io.on('connection', function(socket) {
 		var p = new Player();
 		p.id = Object.size(players);
 		p.name = msg.name;
+		p.color = colors[parseInt(Math.random() * 7)];
 		players[p.id] = p;
 		
 		socket.emit("joined", {
