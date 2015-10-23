@@ -52,7 +52,7 @@ io.on('connection', function(socket) {
 
 app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/public/views/home.html');
+	res.sendFile(__dirname + '/public/views/home_client.html');
 });
 
 app.get('/surface', function(req, res) {
